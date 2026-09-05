@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Setlist — Offline</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;600;700&display=swap");
+      * { box-sizing: border-box; }
+      html, body {
+        margin: 0;
+        height: 100%;
+        background: #0E0F12;
+        color: #F2F0EB;
+        font-family: 'Inter', sans-serif;
+      }
+      .wrap {
+        min-height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        text-align: center;
+      }
+      .badge {
+        width: 56px;
+        height: 56px;
+        border-radius: 16px;
+        background: #FF4D2E;
+        margin-bottom: 20px;
+      }
+      h1 {
+        font-family: 'Archivo Black', sans-serif;
+        font-size: 26px;
+        margin: 0 0 8px;
+      }
+      p {
+        color: #8A8E96;
+        font-size: 14px;
+        margin: 0 0 28px;
+        max-width: 280px;
+      }
+      button {
+        background: #FF4D2E;
+        border: none;
+        border-radius: 14px;
+        padding: 14px 28px;
+        color: #0E0F12;
+        font-family: 'Archivo Black', sans-serif;
+        font-size: 13px;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="badge"></div>
+      <h1>You're offline.</h1>
+      <p>No connection right now. Reconnect and try again — anything you'd already opened may still work.</p>
+      <button onclick="location.reload()">RETRY</button>
+    </div>
+  </body>
+  </html>
