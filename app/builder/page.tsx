@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, Plus, Trash2, Clock, Repeat } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
-import { ExerciseMode } from "@/lib/types";
+import { saveRoutine } from "@/lib/localStore";
+import { ExerciseMode, Routine } from "@/lib/types";
 
 interface DraftExercise {
   name: string;
@@ -18,7 +18,6 @@ const emptyExercise = (): DraftExercise => ({ name: "", mode: "time", work: 30, 
 
 export default function BuilderPage() {
   const router = useRouter();
-  const supabase = createClient();
   const [name, setName] = useState("");
   const [exercises, setExercises] = useState<DraftExercise[]>([emptyExercise()]);
   const [saving, setSaving] = useState(false);
@@ -34,38 +33,27 @@ export default function BuilderPage() {
 
   const canSave = name.trim().length > 0 && exercises.every((e) => e.name.trim().length > 0) && !saving;
 
-  async function save() {
+  function save() {
     setSaving(true);
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      setSaving(false);
-      return;
-    }
 
-    const { data: routine, error } = await supabase
-      .from("routines")
-      .insert({ user_id: user.id, name: name.trim(), color: "#FF4D2E", is_preset: false })
-      .select()
-      .single();
+    const routine: Routine = {
+      id: `local-${Date.now()}`,
+      name: name.trim(),
+      tagline: null,
+      color: "#FF4D2E",
+      is_preset: false,
+      exercises: exercises.map((e, i) => ({
+        id: `${Date.now()}-${i}`,
+        name: e.name.trim(),
+        mode: e.mode,
+        work_seconds: e.mode === "time" ? e.work : null,
+        reps: e.mode === "reps" ? e.reps : null,
+        rest_seconds: e.rest,
+        position: i,
+      })),
+    };
 
-    if (error || !routine) {
-      setSaving(false);
-      return;
-    }
-
-    const rows = exercises.map((e, i) => ({
-      routine_id: routine.id,
-      name: e.name.trim(),
-      mode: e.mode,
-      work_seconds: e.mode === "time" ? e.work : null,
-      reps: e.mode === "reps" ? e.reps : null,
-      rest_seconds: e.rest,
-      position: i,
-    }));
-
-    await supabase.from("exercises").insert(rows);
+    saveRoutine(routine);
     setSaving(false);
     router.push("/");
     router.refresh();
@@ -184,4 +172,4 @@ export default function BuilderPage() {
       </button>
     </div>
   );
-}
+    }
